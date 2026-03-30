@@ -1,0 +1,64 @@
+# Local reference repos
+/references/
+
+# Local agent/session files
+.codex/
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
+state.md
+changelog.md
+config.md
+implementation_build_prompt.md
+
+# Private release and App Store operations
+/marketing/app-store/
+/docs/*audit*.md
+/docs/autoresearch-build-performance.md
+/autoresearch/
+/scripts/autoresearch_build_perf_runner.sh
+
+# Optional local binary vendor drops
+/Vendor/TailscaleKit/
+
+# First run scaffold
+/scaffold/*
+
+# macOS / Xcode
+.DS_Store
+/DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcarchive
+*.xcresult
+*.ipa
+*.dSYM/
+
+# Swift / SPM
+/.build/
+/.swiftpm/
+/.asc/
+**/.build/
+**/.build*/
+
+# Misc
+*.log
+*.tmp
+/tmp-schema/
+/.pnpm-store/
+
+# Credentials and signing material
+.env
+.env.*
+!.env.example
+.secrets/
+*.mobileprovision
+*.provisionprofile
+*.p8
+*.pem
+*.key
+*.cer
+*.cert
+*.certSigningRequest
+ExportOptions.plist
