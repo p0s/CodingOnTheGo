@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_macos_gates:
+        description: Run expensive macOS package, simulator, and companion gates.
+        required: true
+        type: boolean
+        default: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  script-sanity:
+    name: Script sanity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Workflow lint
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 -color
+        shell: bash
+      - name: Shell syntax
+        run: |
+          bash -n \
+            scripts/network_hygiene_preflight.sh \
+            scripts/prepare_github_hosted_ci_macos.sh \
+            scripts/resolve_test_ssh_host.sh \
+            scripts/resolve_simulator_destination.sh \
+            scripts/run_appstate_localhost_test.sh \
+            scripts/run_companion_matrix.sh \
+            scripts/run_connection_mode_matrix.sh \
+            scripts/run_cross_device_continuity.sh \
+            scripts/run_physical_ipad_parity.sh \
+            scripts/run_physical_ipad_test.sh \
+            scripts/run_physical_real_host_test.sh \
+            scripts/start_localhost_loopback_listener.sh \
+            scripts/stop_localhost_loopback_listener.sh \
+            scripts/verify_safe_lane_localhost.sh \
+            scripts/verify_github_hosted_ci.sh \
+            scripts/verify_local_runtime_matrix.sh \
+            scripts/verify_local_v1.sh
+          if command -v zsh >/dev/null 2>&1; then
+            zsh -n scripts/validate_physical_devices.sh
+          else
+            echo "::notice::zsh not available on this runner; skipping zsh syntax check"
+          fi
+      - name: Workflow YAML syntax
+        run: ruby -e 'require "yaml"; Dir[".github/workflows/*.yml"].sort.each { |path| YAML.load_file(path) }'
+      - name: Native iOS test plans parse cleanly
+        run: jq empty apps/ios/CodingOnTheGo/TestPlans/*.xctestplan
+
+  xcode-project-sanity:
+    name: Xcode project sanity (manual)
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_macos_gates }}
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare hosted macOS toolchain
+        run: ./scripts/prepare_github_hosted_ci_macos.sh --with-xcodegen
+      - name: Generated Xcode projects stay in sync
+        run: |
+          (cd apps/ios/CodingOnTheGo && xcodegen generate)
+          (cd apps/macOS/CodingOnTheGoCompanion && xcodegen generate)
+          git diff --exit-code -- \
+            apps/ios/CodingOnTheGo/CodingOnTheGo.xcodeproj \
+            apps/macOS/CodingOnTheGoCompanion/CodingOnTheGoCompanion.xcodeproj
+      - name: Hosted and local iOS plans stay wired into the CI scheme
+        run: |
+          xcodebuild \
+            -project apps/ios/CodingOnTheGo/CodingOnTheGo.xcodeproj \
+            -scheme CodingOnTheGoCI \
+            -showTestPlans | tee /tmp/cotg-ci-testplans.txt
+          grep -F 'HostedSafe' /tmp/cotg-ci-testplans.txt
+          grep -F 'HostedExtended' /tmp/cotg-ci-testplans.txt
+          grep -F 'LocalIPadLayout' /tmp/cotg-ci-testplans.txt
+
+  package-tests:
+    name: Swift package tests (hosted-safe)
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_macos_gates }}
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare hosted macOS toolchain
+        run: ./scripts/prepare_github_hosted_ci_macos.sh
+      - name: Run package tests
+        run: ./scripts/verify_github_hosted_ci.sh packages
+
+  ios-simulator:
+    name: iPhone simulator (hosted-safe)
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_macos_gates }}
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare hosted macOS toolchain
+        run: ./scripts/prepare_github_hosted_ci_macos.sh
+      - name: Run hosted-safe iPhone simulator checks
+        run: IOS_RESULT_BUNDLE_PATH="$RUNNER_TEMP/ios-hosted-safe.xcresult" ./scripts/verify_github_hosted_ci.sh ios
+      - name: Upload iPhone simulator result bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-hosted-safe-xcresult
+          path: ${{ runner.temp }}/ios-hosted-safe.xcresult
+          if-no-files-found: warn
+          retention-days: 7
+
+  macos-companion:
+    name: macOS companion
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_macos_gates }}
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare hosted macOS toolchain
+        run: ./scripts/prepare_github_hosted_ci_macos.sh
+      - name: Run macOS companion checks
+        run: MACOS_RESULT_BUNDLE_PATH="$RUNNER_TEMP/macos-companion.xcresult" ./scripts/verify_github_hosted_ci.sh macos
+      - name: Upload macOS companion result bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-companion-xcresult
+          path: ${{ runner.temp }}/macos-companion.xcresult
+          if-no-files-found: warn
+          retention-days: 7
