@@ -1,0 +1,34 @@
+{
+  "configurations" : [
+    {
+      "id" : "17389E30-250B-4F89-83A5-CBA52F66AA03",
+      "name" : "Local iPad Layout",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CodingOnTheGo.xcodeproj",
+      "identifier" : "D4C52A6F28293948E0F72C81",
+      "name" : "CodingOnTheGoPad"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "CodingOnTheGoUITests/testIPadSplitViewShowsInspectorAndTailnetContext",
+        "CodingOnTheGoUITests/testIPadCodexSplitViewShowsBrowserAndInspector",
+        "CodingOnTheGoUITests/testIPadOpenMachineWindowCreatesSecondScene"
+      ],
+      "target" : {
+        "containerPath" : "container:CodingOnTheGo.xcodeproj",
+        "identifier" : "EBE043A41B895C7FE6FBDEEE",
+        "name" : "CodingOnTheGoPadUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

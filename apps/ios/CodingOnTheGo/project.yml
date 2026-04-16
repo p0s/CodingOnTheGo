@@ -1,0 +1,209 @@
+name: CodingOnTheGo
+options:
+  createIntermediateGroups: true
+settings:
+  configs:
+    Debug:
+      COMPILER_INDEX_STORE_ENABLE: NO
+packages:
+  AppState:
+    path: ../../../Packages/AppState
+  SharedModels:
+    path: ../../../Packages/SharedModels
+  Persistence:
+    path: ../../../Packages/Persistence
+  SyncEngine:
+    path: ../../../Packages/SyncEngine
+  Secrets:
+    path: ../../../Packages/Secrets
+  Discovery:
+    path: ../../../Packages/Discovery
+  TailnetEmbedded:
+    path: ../../../Packages/TailnetEmbedded
+  SSHTransport:
+    path: ../../../Packages/SSHTransport
+  HostBootstrap:
+    path: ../../../Packages/HostBootstrap
+  CodexRPC:
+    path: ../../../Packages/CodexRPC
+  CompanionHost:
+    path: ../../../Packages/CompanionHost
+  RouteSelection:
+    path: ../../../Packages/RouteSelection
+  GitWorkspace:
+    path: ../../../Packages/GitWorkspace
+  Notifications:
+    path: ../../../Packages/Notifications
+  FeatureMachines:
+    path: ../../../Packages/FeatureMachines
+  FeatureThreads:
+    path: ../../../Packages/FeatureThreads
+  FeatureComposer:
+    path: ../../../Packages/FeatureComposer
+targets:
+  CodingOnTheGo:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: Sources/App
+      - path: Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codingonthego.ios
+        PRODUCT_NAME: Coding On The Go
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: CodingOnTheGo.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MARKETING_VERSION: 0.9.1
+        CURRENT_PROJECT_VERSION: 21
+        VERSIONING_SYSTEM: apple-generic
+        SWIFT_STRICT_CONCURRENCY: complete
+        TARGETED_DEVICE_FAMILY: 1
+    dependencies:
+      - package: AppState
+      - package: SharedModels
+      - package: Persistence
+      - package: SyncEngine
+      - package: Secrets
+      - package: Discovery
+      - package: TailnetEmbedded
+      - package: SSHTransport
+      - package: HostBootstrap
+      - package: CodexRPC
+      - package: CompanionHost
+      - package: RouteSelection
+      - package: GitWorkspace
+      - package: Notifications
+      - package: FeatureMachines
+      - package: FeatureThreads
+      - package: FeatureComposer
+  CodingOnTheGoPad:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: Sources/App
+      - path: Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codingonthego.ipad
+        PRODUCT_NAME: Coding On The Go iPad
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: CodingOnTheGo.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MARKETING_VERSION: 0.9.1
+        CURRENT_PROJECT_VERSION: 10
+        VERSIONING_SYSTEM: apple-generic
+        SWIFT_STRICT_CONCURRENCY: complete
+        TARGETED_DEVICE_FAMILY: 2
+    dependencies:
+      - package: AppState
+      - package: SharedModels
+      - package: Persistence
+      - package: SyncEngine
+      - package: Secrets
+      - package: Discovery
+      - package: TailnetEmbedded
+      - package: SSHTransport
+      - package: HostBootstrap
+      - package: CodexRPC
+      - package: CompanionHost
+      - package: RouteSelection
+      - package: GitWorkspace
+      - package: Notifications
+      - package: FeatureMachines
+      - package: FeatureThreads
+      - package: FeatureComposer
+  CodingOnTheGoTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: Tests/CodingOnTheGoTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codingonthego.ios.tests
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: AppState
+  CodingOnTheGoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: Tests/CodingOnTheGoUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codingonthego.ios.uitests
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: CodingOnTheGo
+  CodingOnTheGoPadUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: Tests/CodingOnTheGoUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codingonthego.ipad.uitests
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: CodingOnTheGoPad
+schemes:
+  CodingOnTheGo:
+    build:
+      targets:
+        CodingOnTheGo: all
+        CodingOnTheGoTests: [test]
+        CodingOnTheGoUITests: [test]
+    test:
+      targets:
+        - name: CodingOnTheGoTests
+        - name: CodingOnTheGoUITests
+  CodingOnTheGoCI:
+    build:
+      targets:
+        CodingOnTheGo: all
+        CodingOnTheGoTests: [test]
+        CodingOnTheGoUITests: [test]
+    test:
+      targets:
+        - name: CodingOnTheGoTests
+        - name: CodingOnTheGoUITests
+        - name: CodingOnTheGoPadUITests
+      testPlans:
+        - path: TestPlans/HostedSafe.xctestplan
+          defaultPlan: true
+        - path: TestPlans/HostedExtended.xctestplan
+        - path: TestPlans/LocalIPadLayout.xctestplan
+  CodingOnTheGoPad:
+    build:
+      targets:
+        CodingOnTheGoPad: all
+        CodingOnTheGoPadUITests: [test]
+    test:
+      targets:
+        - name: CodingOnTheGoPadUITests
+      testPlans:
+        - path: TestPlans/LocalIPadLayout.xctestplan
+          defaultPlan: true

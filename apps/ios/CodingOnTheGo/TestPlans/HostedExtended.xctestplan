@@ -1,0 +1,49 @@
+{
+  "configurations" : [
+    {
+      "id" : "17389E30-250B-4F89-83A5-CBA52F66AA02",
+      "name" : "Hosted Extended",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CodingOnTheGo.xcodeproj",
+      "identifier" : "F8FC40806923CE66A27B0AD9",
+      "name" : "CodingOnTheGo"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "CodingOnTheGoTests/testFreshInstallStartsEmpty",
+        "CodingOnTheGoTests/testIOSRuntimeShowsLoopbackUpgradeLaneWhenSupported"
+      ],
+      "target" : {
+        "containerPath" : "container:CodingOnTheGo.xcodeproj",
+        "identifier" : "ED34A18FEB8B572FFD247BA5",
+        "name" : "CodingOnTheGoTests"
+      }
+    },
+    {
+      "selectedTests" : [
+        "CodingOnTheGoUITests/testFreshInstallScanLocalNetworkShowsVisibleFeedback",
+        "CodingOnTheGoUITests/testFreshInstallScanLocalNetworkDiagnosticStatus",
+        "CodingOnTheGoUITests/testFreshInstallShowsHonestOnboardingState",
+        "CodingOnTheGoUITests/testFreshInstallFallbackActionsExpandManualRouteFormAndPreselectKind",
+        "CodingOnTheGoUITests/testShellTabsMatchProductModel",
+        "CodingOnTheGoUITests/testDefaultLaunchOpensCodexWithoutSelectingSession",
+        "CodingOnTheGoUITests/testCodexSettingsExposeBrowserPresentationPreference"
+      ],
+      "target" : {
+        "containerPath" : "container:CodingOnTheGo.xcodeproj",
+        "identifier" : "24F1FE59C514C1EC7695F067",
+        "name" : "CodingOnTheGoUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
